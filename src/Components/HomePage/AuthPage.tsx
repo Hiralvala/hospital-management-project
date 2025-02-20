@@ -17,29 +17,29 @@ const AuthPage = () => {
     role: "patient",
   });
 
-  const handleRegisterChange = (e:any) => {
-    setRegisterData({ ...registerData, [e.target.name]: e.target.value });
-  };
+  // const handleRegisterChange = (e:any) => {
+  //   setRegisterData({ ...registerData, [e.target.name]: e.target.value });
+  // };
 
-  const handleLoginChange = (e:any) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
-  };
+  // const handleLoginChange = (e:any) => {
+  //   setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  // };
 
-  const handleRegisterSubmit = (e:any) => {
-    e.preventDefault();
-    if (registerData.password !== registerData.confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-    console.log("Registration data:", registerData);
-    alert("Registration successful!");
-  };
+  // const handleRegisterSubmit = (e:any) => {
+  //   e.preventDefault();
+  //   if (registerData.password !== registerData.confirmPassword) {
+  //     alert("Passwords do not match.");
+  //     return;
+  //   }
+  //   console.log("Registration data:", registerData);
+  //   alert("Registration successful!");
+  // };
 
-  const handleLoginSubmit = (e:any) => {
-    e.preventDefault();
-    console.log("Login data:", loginData);
-    alert("Login successful!");
-  };
+  // const handleLoginSubmit = (e:any) => {
+  //   e.preventDefault();
+  //   console.log("Login data:", loginData);
+  //   alert("Login successful!");
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center py-12 px-4 w-screen">
@@ -76,7 +76,9 @@ const AuthPage = () => {
           {activeTab === "login" && (
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-gray-800">Welcome Back!</h2>
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <form 
+              // onSubmit={handleLoginSubmit} 
+              className="space-y-4">
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                     Username
@@ -88,7 +90,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Username"
-                    onChange={handleLoginChange}
+                    // onChange={handleLoginChange}
                   />
                 </div>
                 <div>
@@ -102,7 +104,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Password"
-                    onChange={handleLoginChange}
+                    // onChange={handleLoginChange}
                   />
                 </div>
                 <div>
@@ -114,7 +116,7 @@ const AuthPage = () => {
                     name="role"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     value={loginData.role}
-                    onChange={handleLoginChange}
+                    // onChange={handleLoginChange}
                   >
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
@@ -138,7 +140,9 @@ const AuthPage = () => {
           {activeTab === "register" && (
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-gray-800">Create Account</h2>
-              <form onSubmit={handleRegisterSubmit} className="space-y-4">
+              <form 
+              // onSubmit={handleRegisterSubmit} 
+              className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Name
@@ -150,7 +154,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Name"
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   />
                 </div>
                 <div>
@@ -164,7 +168,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Email"
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   />
                 </div>
                 <div>
@@ -178,7 +182,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Phone Number"
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   />
                 </div>
                 <div>
@@ -192,7 +196,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Password"
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   />
                 </div>
                 <div>
@@ -206,7 +210,7 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Confirm Your Password"
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   />
                 </div>
                 <div>
@@ -218,7 +222,7 @@ const AuthPage = () => {
                     name="role"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     value={registerData.role}
-                    onChange={handleRegisterChange}
+                    // onChange={handleRegisterChange}
                   >
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
