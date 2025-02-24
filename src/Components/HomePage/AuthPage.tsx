@@ -1,8 +1,10 @@
 "use client"
 import React, { useState } from "react";
+import { PulseLoader } from "react-spinners";
 
 const AuthPage = () => {
   const [activeTab, setActiveTab] = useState("login");
+  const [isLoading, setIsLoading] = useState(false); 
   const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
@@ -12,34 +14,93 @@ const AuthPage = () => {
     role: "patient",
   });
   const [loginData, setLoginData] = useState({
-    username: "",
+    userName: "",
     password: "",
     role: "patient",
   });
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loggedInUser, setLoggedInUser] = useState<any>(null); 
 
-  // const handleRegisterChange = (e:any) => {
-  //   setRegisterData({ ...registerData, [e.target.name]: e.target.value });
-  // };
+  const handleRegisterChange = (e:any) => {
+    setRegisterData({ ...registerData, [e.target.name]: e.target.value });
+  };
 
-  // const handleLoginChange = (e:any) => {
-  //   setLoginData({ ...loginData, [e.target.name]: e.target.value });
-  // };
+  const handleLoginChange = (e:any) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  };
 
-  // const handleRegisterSubmit = (e:any) => {
-  //   e.preventDefault();
-  //   if (registerData.password !== registerData.confirmPassword) {
-  //     alert("Passwords do not match.");
-  //     return;
-  //   }
-  //   console.log("Registration data:", registerData);
-  //   alert("Registration successful!");
-  // };
+  const handleRegisterSubmit = async (e:any) => {
+    e.preventDefault();
+    if (registerData.password !== registerData.confirmPassword) {
+      setRegistrationError("Passwords do not match.");
+      return;
+    }
+    setIsLoading(true); 
+    setRegistrationError(null); 
+    try{
+      const response=await fetch('/api/register',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+        },
+        body: JSON.stringify(registerData),
+      })
 
-  // const handleLoginSubmit = (e:any) => {
-  //   e.preventDefault();
-  //   console.log("Login data:", loginData);
-  //   alert("Login successful!");
-  // };
+      const data= await response.json();
+
+      if(response.ok){
+        alert(data.message);
+        setRegisterData({
+          name:"",
+          email:"",
+          phoneNumber:"",
+          password:"",
+          confirmPassword:"",
+          role:"patient"
+        })
+      }else{
+        setRegistrationError(data.error || data.message || 'Registration failed');
+      }
+    }catch(error:any){
+      console.error('Client-side error:', error);
+      setRegistrationError('An unexpected error occurred during registration.');
+    }finally{
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginSubmit = async (e:any) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setLoginError(null);
+    try{
+      const response = await fetch('/api/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(loginData),
+      })
+      const data= await response.json();
+
+      if(response.ok){
+        alert(data.message);
+        setLoggedInUser(data.user);
+        setLoginData({
+          userName:"",
+          password:"",
+          role:"patient",
+        })
+      }else{
+        setLoginError(data.error || data.message || 'Login failed')
+        console.log(loginError, "error of login")
+      }
+    }catch(error:any){
+      console.error('Client-side login error', error)
+      setLoginError('An unexpected error occurred during login.');
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center py-12 px-4 w-screen">
@@ -77,20 +138,24 @@ const AuthPage = () => {
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-gray-800">Welcome Back!</h2>
               <form 
-              // onSubmit={handleLoginSubmit} 
+              onSubmit={handleLoginSubmit} 
               className="space-y-4">
+                 {loginError && (
+                  <div className="text-red-500 text-sm">{loginError}</div>
+                )}
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                     Username
                   </label>
                   <input
                     id="username"
-                    name="username"
+                    name="userName"
                     type="text"
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Username"
-                    // onChange={handleLoginChange}
+                    onChange={handleLoginChange}
+                    value={loginData.userName}
                   />
                 </div>
                 <div>
@@ -104,7 +169,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Password"
-                    // onChange={handleLoginChange}
+                    onChange={handleLoginChange}
+                    value={loginData.password}
                   />
                 </div>
                 <div>
@@ -116,7 +182,7 @@ const AuthPage = () => {
                     name="role"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     value={loginData.role}
-                    // onChange={handleLoginChange}
+                    onChange={handleLoginChange}
                   >
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
@@ -129,7 +195,11 @@ const AuthPage = () => {
                     type="submit"
                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Sign In
+                     {isLoading ? (
+                      <PulseLoader />
+                    ) : (
+                      "Sign In"
+                    )}
                   </button>
                 </div>
               </form>
@@ -141,8 +211,11 @@ const AuthPage = () => {
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-gray-800">Create Account</h2>
               <form 
-              // onSubmit={handleRegisterSubmit} 
+              onSubmit={handleRegisterSubmit} 
               className="space-y-4">
+                {registrationError && (
+                  <div className="text-red-500 text-sm">{registrationError}</div>
+                )}
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Name
@@ -154,7 +227,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Name"
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
+                    value={registerData.name} 
                   />
                 </div>
                 <div>
@@ -168,7 +242,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Email"
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
+                    value={registerData.email} 
                   />
                 </div>
                 <div>
@@ -182,7 +257,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Phone Number"
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
+                    value={registerData.phoneNumber} 
                   />
                 </div>
                 <div>
@@ -196,7 +272,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Your Password"
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
+                    value={registerData.password} 
                   />
                 </div>
                 <div>
@@ -210,7 +287,8 @@ const AuthPage = () => {
                     required
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     placeholder="Confirm Your Password"
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
+                    value={registerData.confirmPassword} 
                   />
                 </div>
                 <div>
@@ -222,7 +300,7 @@ const AuthPage = () => {
                     name="role"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     value={registerData.role}
-                    // onChange={handleRegisterChange}
+                    onChange={handleRegisterChange}
                   >
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
@@ -235,7 +313,11 @@ const AuthPage = () => {
                     type="submit"
                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Create Account
+                    {isLoading ? (
+                      <PulseLoader />
+                    ) : (
+                      "Create Account"
+                    )}
                   </button>
                 </div>
               </form>
